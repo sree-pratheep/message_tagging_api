@@ -1,0 +1,35 @@
+pip install django
+pip install django-crispy-forms
+pip install pillow
+python3 -m django --version
+django-admin startproject message_tagging_api
+
+npx create-react-app message-tagging
+npm start
+npm install react-bootstrap bootstrap@4.6.0
+
+
+python3 manage.py shell
+python3 manage.py makemigrations
+python3 manage.py sqlmigrate api 0001
+python3 manage.py migrate
+python3 manage.py runserver
+python3 manage.py createsuperuser
+python3 manage.py startapp
+
+
+
+from api.models import Message
+Query
+------
+Message.objects.all()
+Message.objects.first()
+Message.objects.filter(groupid=100)
+Message.objects.filter(groupid=100).first()
+Message.objects.filter(groupid=100).first().
+Message.objects.get(id=10)
+Message.objects.create(id=1, group_id=101)
+message_1 = Message(id=1, group_id=100)
+
+user.post_set.all() - all posts the user has created
+user.post_set.create()

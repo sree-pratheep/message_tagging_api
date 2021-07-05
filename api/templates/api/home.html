@@ -1,0 +1,15 @@
+{% extends "api/base.html" %}
+{% block content %}
+    {% for  message in telegram_messages %}
+       <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ message.id }}</a>
+              <small class="text-muted">{{ message.date }}</small>
+            </div>
+            <h2><a class="article-title" href="#">{{ message.text }}</a></h2>
+            <p class="article-content">{{ message.text }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
