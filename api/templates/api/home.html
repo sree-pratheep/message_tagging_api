@@ -1,15 +1,19 @@
 {% extends "api/base.html" %}
 {% block content %}
     {% for  message in telegram_messages %}
-       <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ message.id }}</a>
-              <small class="text-muted">{{ message.date }}</small>
-            </div>
-            <h2><a class="article-title" href="#">{{ message.text }}</a></h2>
-            <p class="article-content">{{ message.text }}</p>
-          </div>
-        </article>
+       <div class="card mb-3">
+           <div class="card-header">{% firstof message.text|truncatechars:25 "Message" %}
+               <small class="text-muted float-right">{{ message.date }}</small>
+           </div>
+           <div class="card-body">
+
+               <pre class="card-text">
+                   {{ message.text }}
+               </pre>
+               {% if message.has_media and message.media_path %}
+               <img class="card-img-top" src="http://127.0.0.1:8080/{{ message.media_path }}">
+               {% endif %}
+           </div>
+       </div>
     {% endfor %}
 {% endblock content %}

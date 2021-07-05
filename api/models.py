@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class TelegramMessage(models.Model):
@@ -16,5 +17,6 @@ class TelegramMessage(models.Model):
     def __str__(self):
         return str(self.id)
 
-
+    def get_absolute_url(self):
+        return reverse('message-detail', kwargs={'pk': self.pk})
 
