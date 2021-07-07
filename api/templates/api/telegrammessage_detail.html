@@ -1,19 +1,15 @@
 {% extends "api/base.html" %}
 {% block content %}
-   <article class="media content-section">
-      <div class="media-body">
-        <div class="article-metadata">
-          <a class="mr-2" href="#">{{ object.id }}</a>
-          <small class="text-muted">{{ object.date }}</small>
-{#           {% if object.author == user %} #}
-            <div>
-            <a class="btn btn-secondary btn-sm mb-1" href="{% url 'message-update' object.id %}">Update</a>
-            <a class="btn btn-danger btn-sm mb-1" href="{% url 'message-delete' object.id %}">Delete</a>
-            </div>
-{#            {% endif %} #}
-        </div>
-        <h2><a class="article-title" href="#">{{ object.text }}</a></h2>
-        <p class="article-content">{{ object.text }}</p>
-      </div>
-    </article>
+       <div class="card mb-3">
+           <div class="card-header">{% firstof object.text|truncatechars:25 "Message" %}
+               {% firstof object.grouped_id "" %}
+               <small class="text-muted float-right">{{ object.date }}</small>
+           </div>
+           <div class="card-body">
+               <p class="card-text">{{ object.text|linebreaks }}</p>
+               {% if object.has_media and object.media_path %}
+               <img class="card-img-top" src="http://127.0.0.1:8080/{{ object.media_path }}">
+               {% endif %}
+           </div>
+       </div>
 {% endblock content %}

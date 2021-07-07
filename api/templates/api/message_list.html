@@ -1,0 +1,15 @@
+{% for  message in page_obj %}
+   <div class="card mb-3">
+       <div class="card-header"><a href="{% url 'message-detail' message.id %}">{% firstof message.text|truncatechars:25 "Message" %}</a>
+           <small class="text-muted float-right">{{ message.date }}</small>
+       </div>
+       <div class="card-body">
+           <p class="card-text">{{ message.text|linebreaks }}</p>
+           {% if message.media_set %}
+           {% for media in message.media_set.all %}
+            <img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}">
+           {% endfor %}
+           {% endif %}
+       </div>
+   </div>
+{% endfor %}

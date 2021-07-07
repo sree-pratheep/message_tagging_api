@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import ForeignKey
 from django.urls import reverse
 
 
@@ -20,3 +21,8 @@ class TelegramMessage(models.Model):
     def get_absolute_url(self):
         return reverse('message-detail', kwargs={'pk': self.pk})
 
+
+class TelegramMedia(models.Model):
+    grouped_id = models.BigIntegerField(default=None, blank=True, null=True)
+    media_path = models.fields.TextField(default=None, blank=True, null=True)
+    telegram_message: ForeignKey = models.ForeignKey(TelegramMessage, on_delete=models.CASCADE, related_name='media_set')

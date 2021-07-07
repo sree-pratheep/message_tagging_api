@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.views.generic import (
@@ -12,20 +13,38 @@ from django.views.generic import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 import json
-from .models import TelegramMessage
+from .models import TelegramMessage, TelegramMedia
+
 
 message_json_path = '/home/sree/covid-project/telegram-messages/messages/'
+PAGE_SIZE = 10
 
 
-def home(request):
-    message_list = TelegramMessage.objects.all()[:10]
-    return render(request, 'api/home.html', {'telegram_messages': message_list})
+def search_messages(request):
+    if request.method == 'POST':
+        searched = request.POST.get('searched')
+        page_number = request.POST.get('page', 1)
+    elif request.method == 'GET':
+        searched = request.GET.get('searched')
+        page_number = request.GET.get('page', 1)
+    else:
+        searched = None
+        page_number = 1
+
+    if searched:
+        message_list = TelegramMessage.objects.filter(message__contains=searched).order_by('-date')
+    else:
+        message_list = TelegramMessage.objects.all().order_by('-date')
+
+    paginator = Paginator(message_list, PAGE_SIZE)
+    page_obj = paginator.page(page_number)
+    return render(request, 'api/search_results.html', {'page_obj': page_obj, 'searched': searched})
 
 
 class TelegramMessageListView(ListView):
     model = TelegramMessage
     template_name = 'api/home.html'
-    context_object_name = 'telegram_messages'
+    paginate_by = PAGE_SIZE
     ordering = ['-date']
 
 
@@ -93,17 +112,31 @@ def import_json_data(request):
     latest_message = TelegramMessage.objects.first()
     if latest_message:
         max_message_id = TelegramMessage.objects.latest('id').id
-    written = False
+    written = 0
+    current_group_id = None
+    current_message = None
     for filename in sorted(os.listdir(message_json_path)):
         with open(os.path.join(message_json_path, filename)) as fp:
             for line in fp:
                 message = json.loads(line, object_hook=message_object_decoder)
                 if message.id > max_message_id:
-                    message.save()
-                    written = True
+                    if not message.grouped_id or message.grouped_id != current_group_id:
+                        message.save()
+                        written += 1
+                if message.has_media:
+                    if not message.grouped_id or message.grouped_id != current_group_id:
+                        current_group_id = message.grouped_id
+                        current_message = message
+                    media_message = TelegramMedia()
+                    media_message.id = message.id
+                    media_message.grouped_id = current_group_id
+                    media_message.media_path = message.media_path
+                    media_message.telegram_message = current_message
+                    media_message.save()
+
         # print(len(message_list))
         print(filename)
-        if written:
+        if written > 100:
             break
     return JsonResponse({'status': "Succeeded"})
 

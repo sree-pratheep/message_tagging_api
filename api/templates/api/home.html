@@ -1,19 +1,19 @@
 {% extends "api/base.html" %}
 {% block content %}
-    {% for  message in telegram_messages %}
-       <div class="card mb-3">
-           <div class="card-header">{% firstof message.text|truncatechars:25 "Message" %}
-               <small class="text-muted float-right">{{ message.date }}</small>
-           </div>
-           <div class="card-body">
-
-               <pre class="card-text">
-                   {{ message.text }}
-               </pre>
-               {% if message.has_media and message.media_path %}
-               <img class="card-img-top" src="http://127.0.0.1:8080/{{ message.media_path }}">
-               {% endif %}
-           </div>
-       </div>
+    {% include "api/message_list.html" %}
+    {% if page_obj.has_previous %}
+        <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:3 %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
     {% endfor %}
+    {% if page_obj.has_next %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
 {% endblock content %}
