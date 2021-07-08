@@ -73,12 +73,14 @@ class TelegramMessageDetailView(DetailView):
     model = TelegramMessage
 
     def get_object(self):
-        message_list = TelegramMessage.objects.filter(pk=self.kwargs['pk'])
-        if len(message_list) != 0:
-            return message_list.first()
-        else:
+        url_name = self.request.resolver_match.url_name
+        if url_name == 'message-detail':
+            return super(TelegramMessageDetailView, self).get_object(queryset=self.queryset)
+        if url_name == 'message-detail-next':
             return TelegramMessage.objects.filter(pk__gt=self.kwargs['pk']).earliest('pk')
-
+        if url_name == 'message-detail-prev':
+            return TelegramMessage.objects.filter(pk__lt=self.kwargs['pk']).latest('pk')
+        return super(TelegramMessageDetailView, self).get_object(queryset=self.queryset)
 
 
 class TelegramMessageCreateView(LoginRequiredMixin, CreateView):

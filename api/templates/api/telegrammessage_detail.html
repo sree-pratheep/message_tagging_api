@@ -3,15 +3,11 @@
        <div class="card mb-3">
            <div class="card-header">
                {% if object.id != 0 %}
-                <a href="{% url 'message-detail' object.id|add:-1 %}"><<</a>
+                <a href="{% url 'message-detail-prev' object.id %}"><<</a>
                {% endif %}
                {% firstof object.text|truncatechars:25 "Message" %}
                {# {% firstof object.grouped_id "" %} #}
-               {% if object.media_set|length != 0 %}
-               <a class="float-right" href="{% url 'message-detail' object.id|add:object.media_set.count %}">>></a>
-               {% else %}
-               <a class="float-right" href="{% url 'message-detail' object.id|add:1 %}">>></a>
-               {% endif %}
+               <a class="float-right" href="{% url 'message-detail-next' object.id %}">>></a>
                <small class="text-muted float-right">{{ object.date }}</small>
            </div>
            <div class="card-body">
