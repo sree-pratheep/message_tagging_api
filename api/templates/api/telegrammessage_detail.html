@@ -1,15 +1,34 @@
 {% extends "api/base.html" %}
 {% block content %}
        <div class="card mb-3">
-           <div class="card-header">{% firstof object.text|truncatechars:25 "Message" %}
-               {% firstof object.grouped_id "" %}
+           <div class="card-header">
+               {% if object.id != 0 %}
+                <a href="{% url 'message-detail' object.id|add:-1 %}"><<</a>
+               {% endif %}
+               {% firstof object.text|truncatechars:25 "Message" %}
+               {# {% firstof object.grouped_id "" %} #}
+               {% if object.media_set|length != 0 %}
+               <a class="float-right" href="{% url 'message-detail' object.id|add:object.media_set.count %}">>></a>
+               {% else %}
+               <a class="float-right" href="{% url 'message-detail' object.id|add:1 %}">>></a>
+               {% endif %}
                <small class="text-muted float-right">{{ object.date }}</small>
            </div>
            <div class="card-body">
                <p class="card-text">{{ object.text|linebreaks }}</p>
-               {% if object.has_media and object.media_path %}
-               <img class="card-img-top" src="http://127.0.0.1:8080/{{ object.media_path }}">
+
+               {% if object.media_set %}
+               {% for media in object.media_set.all %}
+               {% if media.type %}
+               <img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}">
+               <a href="{% url 'media-update' media.id %}" target="_blank">Update Tag</a>
+               {% else %}
+                <a href="{% url 'media-update' media.id %}" target="_blank"><img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}"></a>
+               {% endif %}
+               {% endfor %}
                {% endif %}
            </div>
        </div>
+    </nav>
+
 {% endblock content %}

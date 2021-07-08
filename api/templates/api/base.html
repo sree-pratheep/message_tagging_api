@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <link rel="stylesheet" href="{% static 'api/main.css' %}">
+    <script src="https://kit.fontawesome.com/a913f7e4f2.js" crossorigin="anonymous"></script>
     <title>Message tagging</title>
 </head>
 <body>
@@ -26,7 +27,7 @@
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-                <form class="d-flex" method='POST' action="{% url 'search-messages' %}">
+                <form class="d-flex" method='POST' action="{% url 'search-messages-post' %}">
                     {% csrf_token %}
                     <input class="form-control me-2" name="searched" type="search" placeholder="Search Messages" aria-label="Search">
                     <button class="btn btn-outline" type="submit">Search</button>

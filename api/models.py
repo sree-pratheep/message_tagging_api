@@ -14,6 +14,7 @@ class TelegramMessage(models.Model):
     forwards = models.fields.IntegerField(default=0, null=True)
     media_size = models.fields.BigIntegerField(default=0, null=True)
     has_media = models.fields.BooleanField(default=False)
+    channel_name = models.fields.TextField(blank=False, null=False)
 
     def __str__(self):
         return str(self.id)
@@ -25,4 +26,10 @@ class TelegramMessage(models.Model):
 class TelegramMedia(models.Model):
     grouped_id = models.BigIntegerField(default=None, blank=True, null=True)
     media_path = models.fields.TextField(default=None, blank=True, null=True)
-    telegram_message: ForeignKey = models.ForeignKey(TelegramMessage, on_delete=models.CASCADE, related_name='media_set')
+    media_type = models.fields.TextField(default=None, blank=True, null=True)
+    telegram_message: ForeignKey = models.ForeignKey(TelegramMessage, on_delete=models.CASCADE,
+                                                     related_name='media_set')
+    category = models.CharField(choices=[('India', 'India'), ('Tamil Nadu', 'Tamil Nadu')],
+                                max_length=20,default=None, blank=True, null=True)
+    type = models.CharField(choices=[('Stats', 'Stats'), ('News', 'News')],
+                            max_length=20,default=None, blank=True, null=True)

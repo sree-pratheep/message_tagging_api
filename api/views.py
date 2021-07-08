@@ -1,6 +1,10 @@
 import os
+import time
+import json
 import pandas as pd
-from django.shortcuts import render
+from datetime import date, datetime
+
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -12,27 +16,44 @@ from django.views.generic import (
     DeleteView
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-import json
+from django.contrib import messages
+
 from .models import TelegramMessage, TelegramMedia
+from .forms import MessageTagForm
 
 
 message_json_path = '/home/sree/covid-project/telegram-messages/messages/'
-PAGE_SIZE = 10
+PAGE_SIZE = 50
 
 
-def search_messages(request):
+def add_message_tags(request, pk):
+    if request.method == 'POST':
+        form = MessageTagForm(request.POST)
+        if form.is_valid():
+            media = TelegramMedia.objects.get(pk=pk)
+            media.category = form.cleaned_data['category']
+            media.type = form.cleaned_data['type']
+            media.save()
+            messages.success(request, f'Media tags updated successfully!')
+            return render(request, 'api/telegrammedia_form.html', {'form': form})
+    else:
+        media = TelegramMedia.objects.get(pk=pk)
+        form = MessageTagForm(initial={'id': pk, 'media_path': media.media_path})
+    return render(request, 'api/telegrammedia_form.html', {'form': form})
+
+
+def search_messages(request, searched=None):
     if request.method == 'POST':
         searched = request.POST.get('searched')
-        page_number = request.POST.get('page', 1)
+        return redirect('search-messages', searched=searched)
     elif request.method == 'GET':
-        searched = request.GET.get('searched')
         page_number = request.GET.get('page', 1)
     else:
         searched = None
         page_number = 1
 
     if searched:
-        message_list = TelegramMessage.objects.filter(message__contains=searched).order_by('-date')
+        message_list = TelegramMessage.objects.filter(message__icontains=searched).order_by('-date')
     else:
         message_list = TelegramMessage.objects.all().order_by('-date')
 
@@ -50,6 +71,14 @@ class TelegramMessageListView(ListView):
 
 class TelegramMessageDetailView(DetailView):
     model = TelegramMessage
+
+    def get_object(self):
+        message_list = TelegramMessage.objects.filter(pk=self.kwargs['pk'])
+        if len(message_list) != 0:
+            return message_list.first()
+        else:
+            return TelegramMessage.objects.filter(pk__gt=self.kwargs['pk']).earliest('pk')
+
 
 
 class TelegramMessageCreateView(LoginRequiredMixin, CreateView):
@@ -75,7 +104,7 @@ class TelegramMessageUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateV
 
     def test_func(self):
         post = self.get_object()
-#        if self.request.user == model.author
+        #        if self.request.user == model.author
         return True
 
 
@@ -85,9 +114,21 @@ class TelegramMessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteV
 
     def test_func(self):
         post = self.get_object()
-#        if self.request.user == model.author
+        #        if self.request.user == model.author
         return True
 
+
+class TelegramMediaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = TelegramMedia
+    fields = ['category', 'type']
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        #        if self.request.user == model.author
+        return True
 
 
 def message_object_decoder(obj):
@@ -109,16 +150,23 @@ def message_object_decoder(obj):
 
 def import_json_data(request):
     max_message_id = 0
+    max_date = datetime.min
     latest_message = TelegramMessage.objects.first()
     if latest_message:
-        max_message_id = TelegramMessage.objects.latest('id').id
+        latest_message = TelegramMessage.objects.latest('id')
+        max_message_id = latest_message.id
+        max_date = latest_message.date
     written = 0
     current_group_id = None
     current_message = None
     for filename in sorted(os.listdir(message_json_path)):
+        if datetime.strptime(filename.split('.json')[0], '%Y-%m-%d') < datetime.strptime(str(max_date.date()), '%Y-%m-%d'):
+            print(filename, ' skipped')
+            continue
         with open(os.path.join(message_json_path, filename)) as fp:
             for line in fp:
                 message = json.loads(line, object_hook=message_object_decoder)
+                message.channel_name = 'Telegram-India-Covid-Updates'
                 if message.id > max_message_id:
                     if not message.grouped_id or message.grouped_id != current_group_id:
                         message.save()
@@ -131,12 +179,14 @@ def import_json_data(request):
                     media_message.id = message.id
                     media_message.grouped_id = current_group_id
                     media_message.media_path = message.media_path
+                    if message.media_path and len(message.media_path.split('.')) > 1:
+                        media_message.media_type = message.media_path.split('.')[-1]
                     media_message.telegram_message = current_message
                     media_message.save()
-
+                print("Message id ", message.id)
         # print(len(message_list))
         print(filename)
-        if written > 100:
+        if filename == '2020-12-20.json':
             break
     return JsonResponse({'status': "Succeeded"})
 

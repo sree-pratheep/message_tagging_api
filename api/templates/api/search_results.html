@@ -3,19 +3,5 @@
     <h2>You searched for : {{ searched }}</h2>
     <h3> Returned : {{ page_obj.paginator.count}}</h3>
     {% include "api/message_list.html" %}
-    {% if page_obj.has_previous %}
-        <a class="btn btn-outline-info mb-4" href="?page=1&searched={{searched|urlencode}}">First</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}&searched={{searched|urlencode}}">Previous</a>
-    {% endif %}
-    {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-            <a class="btn btn-info mb-4" href="?page={{num}}&searched={{searched|urlencode}}">{{ num }}</a>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:3 %}
-            <a class="btn btn-outline-info mb-4" href="?page={{ num }}&searched={{searched|urlencode}}">{{ num }}</a>
-        {% endif %}
-    {% endfor %}
-    {% if page_obj.has_next %}
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}&searched={{searched|urlencode}}">Next</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}&searched={{searched|urlencode}}">Last</a>
-    {% endif %}
+    {% include "api/pagination_navigation.html" %}
 {% endblock content %}

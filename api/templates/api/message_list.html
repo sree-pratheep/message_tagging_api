@@ -7,9 +7,19 @@
            <p class="card-text">{{ message.text|linebreaks }}</p>
            {% if message.media_set %}
            {% for media in message.media_set.all %}
-            <img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}">
+           {% if media.type %}
+           <img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}">
+           <a href="{% url 'media-update' media.id %}" target="_blank">Update Tag</a>
+           {% else %}
+           <a href="{% url 'media-update' media.id %}" target="_blank"><img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}"></a>
+           {% endif %}
            {% endfor %}
            {% endif %}
        </div>
+       <div class="card-footer text-muted">
+           {{message.views}} <i class="fas fa-eye"></i>  {{message.forwards}}  <i class="fas fa-share"></i>
+       </div>
+
+       </script>
    </div>
 {% endfor %}
