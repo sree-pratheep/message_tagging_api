@@ -6,7 +6,7 @@ from .views import (
     TelegramMessageCreateView,
     TelegramMessageUpdateView,
     TelegramMessageDeleteView,
-    TelegramMessageListView,
+    TelegramMessageFilterListView,
 )
 
 urlpatterns = [
@@ -23,5 +23,5 @@ urlpatterns = [
     path('message/search/', views.search_messages, name="search-messages-post"),
     path('refresh-data', views.import_json_data, name="import-json-data"),
     path('json-data-status', views.data_stats, name="json-data-status"),
-    path('message/filter_list', TelegramMessageListView.as_view(), name="filter-messages"),
+    path('message/filter_list', TelegramMessageFilterListView.as_view(), name="filter-messages"),
 ]

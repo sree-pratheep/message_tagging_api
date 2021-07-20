@@ -216,12 +216,13 @@ def api_status(request):
     return JsonResponse(s)
 
 
-class TelegramMessageListView(BaseFilterView, ListView):
+class TelegramMessageFilterListView(BaseFilterView, ListView):
     template_name = 'api/filter_list.html'
     model = TelegramMessage
     filterset_class = TelegramMessageFilter
     context_object_name = 'page_obj'
     ordering = ['-id']
+    paginate_by = 50
 
 
 # def telegram_message_list(request):

@@ -15,8 +15,9 @@ python3 manage.py sqlmigrate api 0001
 python3 manage.py migrate
 python3 manage.py runserver
 python3 manage.py createsuperuser
-python3 manage.py startapp
-
+python3 manage.py startapp users
+python3 manage.py startapp api
+python3 manage.py startapp image_parser
 
 
 from api.models import Message
