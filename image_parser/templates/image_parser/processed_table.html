@@ -1,0 +1,23 @@
+{% extends "api/base.html" %}
+{% block content %}
+    <table class="table">
+        <tbody>
+            {% for row in table.table_rows.all %}
+                <tr>
+                {% for cell in row.table_cells.all %}
+                    <td>
+                        {{ cell.text }}
+                        <div>
+                        <img src="data: image/png; base64, {{ cell.image}}">
+                        </div>
+                        <div>
+                        <img src="data: image/png; base64, {{ cell.processed_image}}">
+                        </div>
+                    </td>
+                {% endfor %}
+                </tr>
+            <tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

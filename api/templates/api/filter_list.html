@@ -1,0 +1,11 @@
+{% extends "api/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <form method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" />
+    </form>
+    <p>Total number of messages:{{ page_obj|length }}</p>
+    {% include "api/message_list.html" %}
+{% endblock %}

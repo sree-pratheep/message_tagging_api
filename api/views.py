@@ -13,14 +13,15 @@ from django.views.generic import (
     DetailView,
     CreateView,
     UpdateView,
-    DeleteView
+    DeleteView,
 )
+from django_filters.views import BaseFilterView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 
 from .models import TelegramMessage, TelegramMedia
 from .forms import MessageTagForm
-
+from .filter import TelegramMessageFilter
 
 message_json_path = '/home/sree/covid-project/telegram-messages/messages/'
 PAGE_SIZE = 50
@@ -162,7 +163,8 @@ def import_json_data(request):
     current_group_id = None
     current_message = None
     for filename in sorted(os.listdir(message_json_path)):
-        if datetime.strptime(filename.split('.json')[0], '%Y-%m-%d') < datetime.strptime(str(max_date.date()), '%Y-%m-%d'):
+        if datetime.strptime(filename.split('.json')[0], '%Y-%m-%d') < datetime.strptime(str(max_date.date()),
+                                                                                         '%Y-%m-%d'):
             print(filename, ' skipped')
             continue
         with open(os.path.join(message_json_path, filename)) as fp:
@@ -212,3 +214,16 @@ def data_stats(request):
 def api_status(request):
     s = {'test': 'test1', 'test1': 'test2'}
     return JsonResponse(s)
+
+
+class TelegramMessageListView(BaseFilterView, ListView):
+    template_name = 'api/filter_list.html'
+    model = TelegramMessage
+    filterset_class = TelegramMessageFilter
+    context_object_name = 'page_obj'
+    ordering = ['-id']
+
+
+# def telegram_message_list(request):
+#     f = TelegramMessageFilter(request.GET, queryset=TelegramMessage.objects.all())
+#     return render(request, 'api/filter_list.html', {'filter':f})
