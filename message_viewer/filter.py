@@ -1,5 +1,5 @@
 from django_filters import FilterSet, DateFilter, CharFilter
-from api.models import TelegramMessage
+from message_viewer.models import TelegramMessage
 from django.forms import DateInput
 
 

@@ -1,10 +1,12 @@
-{% extends "api/base.html" %}
+{% extends "message_viewer/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+    <img class="img-fluid" src="http://127.0.0.1:8080/{{ form.media_path.value }}">
     <div class="content-section">
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Message</legend>
                 {{ form|crispy }}
             </fieldset>
             <div class="form-group">

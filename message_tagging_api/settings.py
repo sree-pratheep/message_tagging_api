@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-import api.apps
+import message_viewer.apps
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,8 +31,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
-    'api.apps.ApiConfig',
+    'message_viewer.apps.ApiConfig',
     'image_parser.apps.ImageParserConfig',
+    'api.apps.ApiConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_filters'
+    'django_filters',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -137,5 +139,5 @@ MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'api-home'
+LOGIN_REDIRECT_URL = 'message_viewer-home'
 LOGIN_URL = 'login'

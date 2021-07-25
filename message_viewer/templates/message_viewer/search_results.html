@@ -1,0 +1,7 @@
+{% extends "message_viewer/base.html" %}
+{% block content %}
+    <h2>You searched for : {{ searched }}</h2>
+    <h3> Returned : {{ page_obj.paginator.count}}</h3>
+    {% include "message_viewer/message_list.html" %}
+    {% include "message_viewer/pagination_navigation.html" %}
+{% endblock content %}

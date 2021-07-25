@@ -1,5 +1,5 @@
 from django.db import models
-from api.models import TelegramMedia
+from message_viewer.models import TelegramMedia
 
 
 class TableFromImage(models.Model):
