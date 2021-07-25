@@ -3,7 +3,7 @@ from message_viewer.models import TelegramMedia
 
 
 class TableFromImage(models.Model):
-    telegram_media = models.ForeignKey(TelegramMedia, on_delete=models.CASCADE, related_name='parsed_table')
+    telegram_media = models.OneToOneField(TelegramMedia, on_delete=models.DO_NOTHING, related_name='parsed_table')
     total_columns = models.IntegerField(default=None, blank=False, null=False)
     total_rows = models.IntegerField(default=None, blank=False, null=False)
 
