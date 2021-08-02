@@ -16,10 +16,11 @@
                {% if object.media_set %}
                {% for media in object.media_set.all %}
                {% if media.type %}
-               <img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}">
-               <a href="{% url 'media-update' media.id %}" target="_blank">Update Tag</a>
+                <img class="card-img-top" src="http://127.0.0.1:8000/static/{{ media.media_path }}">
+                <a href="{% url 'media-update' media.id %}" target="_blank">Update Tag</a>
+                <a href="{% url 'image-parser-process' media.id %}" target="_blank">Process Image</a>
                {% else %}
-                <a href="{% url 'media-update' media.id %}" target="_blank"><img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}"></a>
+                <a href="{% url 'media-update' media.id %}" target="_blank"><img class="card-img-top" src="http://127.0.0.1:8000/static/{{ media.media_path }}"></a>
                {% endif %}
                {% endfor %}
                {% endif %}

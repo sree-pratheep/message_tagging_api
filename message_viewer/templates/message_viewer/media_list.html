@@ -1,0 +1,19 @@
+{% for  media in page_obj %}
+   <div class="card mb-3">
+       <div class="card-header"><a target="_blank" href="{% url 'message-detail' media.telegram_message.id %}">{% firstof media.telegram_message.text|truncatechars:25 "Message" %}</a>
+           <small class="text-muted float-right">{{ media.telegram_message.date }}</small>
+       </div>
+       <div class="card-body">
+           <p class="card-text">{{ media.telegram_message.text|linebreaks }}</p>
+           {% if media.type %}
+           <img class="card-img-top" src="/static/{{ media.media_path }}">
+           <a href="{% url 'media-update' media.id %}" target="_blank">Update Tag</a>
+           {% else %}
+           <a href="{% url 'media-update' media.id %}" target="_blank"><img class="card-img-top" src="/static/{{ media.media_path }}"></a>
+           {% endif %}
+       </div>
+       <div class="card-footer text-muted">
+           {{media.telegram_message.views}} <i class="fas fa-eye"></i>  {{media.telegram_message.forwards}}  <i class="fas fa-share"></i>
+       </div>
+   </div>
+{% endfor %}

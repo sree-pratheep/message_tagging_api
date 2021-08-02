@@ -1,7 +1,7 @@
 {% extends "message_viewer/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <img class="img-fluid" src="http://127.0.0.1:8080/{{ form.media_path.value }}">
+    <img class="img-fluid" src="http://127.0.0.1:8000/static/{{ form.media_path.value }}">
     <div class="content-section">
         <form method="POST">
             {% csrf_token %}

@@ -7,6 +7,7 @@ from .views import (
     TelegramMessageUpdateView,
     TelegramMessageDeleteView,
     TelegramMessageFilterListView,
+    TelegramMediaFilterListView,
 )
 
 urlpatterns = [
@@ -24,4 +25,5 @@ urlpatterns = [
     path('refresh-data', views.import_json_data, name="import-json-data"),
     path('json-data-status', views.data_stats, name="json-data-status"),
     path('message/filter_list', TelegramMessageFilterListView.as_view(), name="filter-messages"),
+    path('media/filter_list', TelegramMediaFilterListView.as_view(), name="filter-media"),
 ]

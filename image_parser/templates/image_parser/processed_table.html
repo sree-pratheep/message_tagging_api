@@ -1,5 +1,16 @@
-{% extends "api/base.html" %}
+{% extends "message_viewer/base.html" %}
 {% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+This image is already processed. Click <a href="{% url 'image-parser-process' message_id=table.telegram_media.id %}?reprocess=true">here</a> to process again.
+(This would delete the already processed data)
+<a href="http://localhost:3000/table/{{table.id}}/">To correct the data click here</a>
     <table class="table">
         <tbody>
             {% for row in table.table_rows.all %}

@@ -21,7 +21,7 @@ from django.contrib import messages
 
 from .models import TelegramMessage, TelegramMedia
 from .forms import MessageTagForm
-from .filter import TelegramMessageFilter
+from .filter import TelegramMessageFilter, TelegramMediaFilter
 
 message_json_path = '/home/sree/covid-project/telegram-messages/messages/'
 PAGE_SIZE = 50
@@ -224,6 +224,12 @@ class TelegramMessageFilterListView(BaseFilterView, ListView):
     ordering = ['-id']
 
 
+class TelegramMediaFilterListView(BaseFilterView, ListView):
+    template_name = 'message_viewer/media_filter_list.html'
+    model = TelegramMedia
+    filterset_class = TelegramMediaFilter
+    context_object_name = 'page_obj'
+    ordering = ['-id']
 # def telegram_message_list(request):
 #     f = TelegramMessageFilter(request.GET, queryset=TelegramMessage.objects.all())
 #     return render(request, 'message_viewer/filter_list.html', {'filter':f})

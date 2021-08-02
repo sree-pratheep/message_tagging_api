@@ -1,6 +1,6 @@
 {% for  message in page_obj %}
    <div class="card mb-3">
-       <div class="card-header"><a href="{% url 'message-detail' message.id %}">{% firstof message.text|truncatechars:25 "Message" %}</a>
+       <div class="card-header"><a target="_blank" href="{% url 'message-detail' message.id %}">{% firstof message.text|truncatechars:25 "Message" %}</a>
            <small class="text-muted float-right">{{ message.date }}</small>
        </div>
        <div class="card-body">
@@ -8,10 +8,10 @@
            {% if message.media_set %}
            {% for media in message.media_set.all %}
            {% if media.type %}
-           <img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}">
+           <img class="card-img-top" src="/static/{{ media.media_path }}">
            <a href="{% url 'media-update' media.id %}" target="_blank">Update Tag</a>
            {% else %}
-           <a href="{% url 'media-update' media.id %}" target="_blank"><img class="card-img-top" src="http://127.0.0.1:8080/{{ media.media_path }}"></a>
+           <a href="{% url 'media-update' media.id %}" target="_blank"><img class="card-img-top" src="/static/{{ media.media_path }}"></a>
            {% endif %}
            {% endfor %}
            {% endif %}
@@ -19,7 +19,5 @@
        <div class="card-footer text-muted">
            {{message.views}} <i class="fas fa-eye"></i>  {{message.forwards}}  <i class="fas fa-share"></i>
        </div>
-
-       </script>
    </div>
 {% endfor %}

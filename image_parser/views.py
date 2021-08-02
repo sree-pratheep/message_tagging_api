@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import UpdateView
 from django.forms import inlineformset_factory, modelformset_factory
@@ -9,6 +9,14 @@ from .india.stats import get_table_cells
 
 def process_image(request, message_id):
     media_message = TelegramMedia.objects.get(pk=message_id)
+
+    parsed_table = TableFromImage.objects.filter(telegram_media=media_message).first()
+
+    if parsed_table:
+        if request.GET.get('reprocess'):
+            media_message.parsed_table.delete()
+        else:
+            return render(request, 'image_parser/processed_table.html', {'table': media_message.parsed_table})
     parsed_table, rows, cells = get_table_cells('/home/sree/covid-project/' + media_message.media_path)
     parsed_table.telegram_media = media_message
     parsed_table.save()
@@ -18,8 +26,7 @@ def process_image(request, message_id):
     for cell in cells:
         cell.save()
 
-    return render(request, 'image_parser/processed_table.html', {'table': parsed_table})
-
+    return redirect('image-parser-process', message_id=message_id)
 
 
 def manage_data(request, id):
